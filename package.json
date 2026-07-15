@@ -1,0 +1,9 @@
+{
+  "name": "devrev-d-demo-log-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UC4 dummy MES log API fixtures for DevRev demo",
+  "engines": {
+    "node": ">=22"
+  }
+}
