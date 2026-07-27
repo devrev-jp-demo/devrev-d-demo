@@ -4,5 +4,6 @@ package partners.kowa.calc;
 public class PremiumRate {
     public static final double LEGAL_OT = 0.25;
     public static final double KOWA_OT = 0.30;
+    /** Returns the configured overtime premium rate. */
     public double overtimeRate() { return KOWA_OT; }
 }
