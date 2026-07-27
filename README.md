@@ -1,16 +1,17 @@
-# TIME-3X デモ（devrev-d-demo）
+# TIME-3X デモ（devrev-d-demo）— 法令影響あり側
 
-デンソー TIME-3X デモ用の **単一リポジトリ**。UC④ で見せる GitHub はこの repo のみ。
+UC④のメイン表面。法令改正デモでは **第2リポと対比**する。
 
-旧 MES UC4 デモは放棄。MES 由来の Issue は削除済み。
+| リポ | 顧客 | 法令改正（例: 月60h超割増）でのカスタム改修 |
+|------|------|---------------------------------------------|
+| **本リポ** | 光和サービス | **要**（独自割増30%・海外手当・給与連携） |
+| [`daisukenakajima-devrev/devrev-demo-a-comp`](https://github.com/daisukenakajima-devrev/devrev-demo-a-comp) | 丸幸工業 | **不要**（リフレッシュ休暇のみ） |
+
+> 希望の org パスは `devrev-jp-demo/devrev-demo-a-comp`（作成権限待ち）。現状は個人アカウント上の同等リポを使用。
 
 | パス | 用途 |
 |------|------|
-| `partners/marukou/` | 丸幸工業カスタム（リフレッシュ休暇） |
-| `partners/kowa/` | 光和サービスカスタム（海外勤務・割増30%・給与連携） |
-| `api/` | ダミーログ / status API（Vercel） |
-| `public/` | TIME-3X Ops Console（デモ用モック UI） |
+| `partners/kowa/` | 光和サービスカスタム |
+| `api/` / `public/` | TIME-3X Ops Console + ダミーログ API（Vercel） |
 
-- DevRev: TIME-3X Product（PROD-4）
 - Vercel: https://devrev-d-demo.vercel.app
-- 顧客切替は Vercel UI のモックのみ（裏は同一リポ・同一 API）
