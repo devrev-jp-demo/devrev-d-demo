@@ -1,4 +1,17 @@
 {
   "version": 2,
-  "rewrites": [{ "source": "/api/logs", "destination": "/api/logs" }]
+  "rewrites": [
+    { "source": "/api/logs", "destination": "/api/logs" },
+    { "source": "/api/mes/status", "destination": "/api/mes/status" },
+    { "source": "/api/uc4-triage", "destination": "/api/uc4-triage" },
+    { "source": "/api/uc4-issue-kick", "destination": "/api/uc4-issue-kick" }
+  ],
+  "functions": {
+    "api/uc4-triage.js": {
+      "maxDuration": 300
+    },
+    "api/uc4-issue-kick.js": {
+      "maxDuration": 60
+    }
+  }
 }

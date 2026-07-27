@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TIME-3X Ops Console — Demo Mock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c1218;
+      --bg-2: #141c26;
+      --panel: #182230;
+      --line: #2a3a4d;
+      --text: #d8e2ec;
+      --muted: #7f92a8;
+      --accent: #3db8a8;
+      --warn: #e0a84a;
+      --err: #e56b5c;
+      --ok: #4ecb8d;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --sans: "IBM Plex Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1100px 560px at 8% -12%, #1a2e3a 0%, transparent 55%),
+        radial-gradient(800px 480px at 100% 0%, #163028 0%, transparent 42%),
+        linear-gradient(180deg, var(--bg) 0%, #080c11 100%);
+      line-height: 1.5;
+    }
+
+    .shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      animation: rise 0.6s ease both;
+    }
+
+    .brand { display: flex; flex-direction: column; gap: 6px; }
+
+    .brand-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      max-width: 48ch;
+      font-size: 0.95rem;
+    }
+
+    .mock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--line));
+      background: color-mix(in srgb, var(--warn) 12%, transparent);
+      color: var(--warn);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      animation: rise 0.6s ease 0.08s both;
+    }
+
+    .mock-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warn);
+      animation: pulse 1.8s ease infinite;
+    }
+
+    .tenant-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 70%, transparent);
+      animation: rise 0.6s ease 0.05s both;
+    }
+
+    .tenant-bar label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .tenant-bar select {
+      min-width: 160px;
+    }
+
+    .tenant-note {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 18px 18px 16px;
+      backdrop-filter: blur(6px);
+      animation: rise 0.65s ease both;
+    }
+
+    .panel:nth-child(2) { animation-delay: 0.1s; }
+    .panel:nth-child(3) { animation-delay: 0.16s; grid-column: 1 / -1; }
+
+    .panel-h {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-h h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 12px 10px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+    }
+
+    .stat .label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .stat .value {
+      margin-top: 4px;
+      font-size: 1.35rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat .value.err { color: var(--err); }
+    .stat .value.warn { color: var(--warn); }
+    .stat .value.ok { color: var(--ok); }
+    .stat .value.accent { color: var(--accent); font-size: 1.15rem; }
+
+    .jobs {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .job {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .dot.err { background: var(--err); }
+    .dot.warn { background: var(--warn); }
+    .dot.ok { background: var(--ok); }
+
+    .job code {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    button, select {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    button:disabled { opacity: 0.5; cursor: wait; }
+
+    .logbox {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      background: #080c11;
+      border: 1px solid var(--line);
+      padding: 14px;
+      min-height: 220px;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .logbox .INFO { color: var(--muted); }
+    .logbox .WARN { color: var(--warn); }
+    .logbox .ERROR { color: var(--err); }
+
+    .foot {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: var(--mono);
+      animation: rise 0.7s ease 0.2s both;
+    }
+
+    .foot a { color: var(--accent); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--warn) 45%, transparent); }
+      70% { box-shadow: 0 0 0 10px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand">
+        <div class="brand-kicker">Attendance · Payroll Ops</div>
+        <h1>TIME-3X Ops Console</h1>
+        <p class="sub">勤怠集計・割増計算・給与連携の監視画面です。デモ説明用のダミーUIで、本番 TIME-3X ではありません。</p>
+      </div>
+      <div class="mock-pill" title="デモ時はこの表示を指してモックだと説明してください">Demo Mock · Not Production</div>
+    </header>
+
+    <div class="tenant-bar">
+      <label for="tenant">Customer</label>
+      <select id="tenant" aria-label="Customer tenant">
+        <option value="marukou">丸幸工業</option>
+        <option value="kowa">光和サービス</option>
+      </select>
+      <span class="tenant-note" id="tenantNote">UI mock · same repo / same API</span>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Production status</h2>
+          <span class="meta" id="clock">—</span>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="label">Version</div>
+            <div class="value accent" id="prodVersion">—</div>
+          </div>
+          <div class="stat">
+            <div class="label">Alerts</div>
+            <div class="value err" id="alertCount">1</div>
+          </div>
+          <div class="stat">
+            <div class="label">Last batch</div>
+            <div class="value ok" id="lastBatch">OK</div>
+          </div>
+        </div>
+        <p class="meta" style="margin:12px 0 0" id="statusMeta">loading /api/mes/status …</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Open incidents (fixture)</h2>
+          <span class="meta" id="incidentTenant">丸幸工業</span>
+        </div>
+        <ul class="jobs" id="incidentList">
+          <li class="job">
+            <span class="dot err"></span>
+            <div>
+              <div>月次勤怠締め 割増計算タイムアウト</div>
+              <code>E-517 · ATTEND-CLOSE</code>
+            </div>
+            <code>OPEN</code>
+          </li>
+          <li class="job">
+            <span class="dot warn"></span>
+            <div>
+              <div>休暇マスタ未登録（リフレッシュ休暇）</div>
+              <code>E-402 · LEAVE</code>
+            </div>
+            <code>WATCH</code>
+          </li>
+          <li class="job">
+            <span class="dot ok"></span>
+            <div>
+              <div>給与連携ファイル再送完了</div>
+              <code>E-511 · PAYLINK</code>
+            </div>
+            <code>CLOSED</code>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Log fixture viewer</h2>
+          <span class="meta">GET /api/logs</span>
+        </div>
+        <div class="controls">
+          <select id="errorCode" aria-label="Error code">
+            <option value="E-517">E-517 勤怠締め timeout（fixture）</option>
+            <option value="E-402">E-402 休暇マスタ欠損（fixture）</option>
+            <option value="E-511">E-511 給与連携再送（fixture）</option>
+          </select>
+          <select id="mesVersion" aria-label="TIME-3X version" title="E-517 のみ有効">
+            <option value="v3.0">version v3.0（現行）</option>
+            <option value="v1.0">version v1.0（過去）</option>
+          </select>
+          <button type="button" id="loadBtn">Fetch fixture</button>
+        </div>
+        <div class="logbox" id="logbox" aria-live="polite">コードを選んで Fetch fixture を押すと、デモ用ログが表示されます。</div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <div>devrev-d-demo · TIME-3X UC④ demo surface（1 repo）</div>
+      <div>
+        <a href="/api/logs?error=E-517&module=edi&version=v3.0">/api/logs</a>
+        ·
+        <a href="/api/mes/status">/api/mes/status</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const clock = document.getElementById("clock");
+    const logbox = document.getElementById("logbox");
+    const loadBtn = document.getElementById("loadBtn");
+    const errorCode = document.getElementById("errorCode");
+    const mesVersion = document.getElementById("mesVersion");
+    const tenant = document.getElementById("tenant");
+    const incidentTenant = document.getElementById("incidentTenant");
+    const tenantNote = document.getElementById("tenantNote");
+    const prodVersion = document.getElementById("prodVersion");
+    const statusMeta = document.getElementById("statusMeta");
+
+    const TENANTS = {
+      marukou: { label: "丸幸工業", alerts: "1", batch: "OK" },
+      kowa: { label: "光和サービス", alerts: "2", batch: "WARN" },
+    };
+
+    function tick() {
+      const now = new Date();
+      clock.textContent = now.toLocaleString("ja-JP", { hour12: false }) + " JST mock";
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    function applyTenant() {
+      const t = TENANTS[tenant.value] || TENANTS.marukou;
+      incidentTenant.textContent = t.label;
+      document.getElementById("alertCount").textContent = t.alerts;
+      document.getElementById("lastBatch").textContent = t.batch;
+      document.getElementById("lastBatch").className =
+        "value " + (t.batch === "OK" ? "ok" : "warn");
+      tenantNote.textContent = `${t.label} · UI mock · same repo / same API`;
+    }
+    tenant.addEventListener("change", applyTenant);
+    applyTenant();
+
+    async function loadStatus() {
+      try {
+        const res = await fetch("/api/mes/status");
+        const data = await res.json();
+        if (!res.ok) {
+          statusMeta.textContent = JSON.stringify(data);
+          return;
+        }
+        prodVersion.textContent = data.production_version || "—";
+        statusMeta.textContent =
+          `${data.service || "time3x"} · ${data.environment || "-"} · ${data.release_name || ""} · checked ${data.checked_at || ""}`;
+      } catch (err) {
+        statusMeta.textContent = String(err);
+      }
+    }
+
+    async function loadLogs() {
+      const code = errorCode.value;
+      const version = mesVersion.value;
+      loadBtn.disabled = true;
+      logbox.textContent = "fetching…";
+      try {
+        const module = code === "E-402" ? "rop" : "edi";
+        let url = `/api/logs?error=${encodeURIComponent(code)}&module=${module}`;
+        if (code === "E-517" && version === "v1.0") {
+          url += `&date=2024-03-15`;
+        }
+        if (code === "E-517") {
+          url += `&version=${encodeURIComponent(version)}`;
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!res.ok) {
+          logbox.textContent = JSON.stringify(data, null, 2);
+          return;
+        }
+        const lines = [
+          `# ${data.error_code} · ${data.version || "-"} · ${data.feature || ""} · ${data.batch_id || "(no batch)"}`,
+          `# note: TIME-3X UI labels · underlying fixture may still use legacy module names`,
+          "",
+        ];
+        for (const row of data.logs || []) {
+          lines.push(`[${row.ts}] ${row.level.padEnd(5)} ${row.msg}`);
+        }
+        logbox.innerHTML = lines
+          .map((line) => {
+            const m = line.match(/\]\s+(INFO|WARN|ERROR)\s+/);
+            if (!m) return escapeHtml(line);
+            return escapeHtml(line).replace(
+              m[1],
+              `<span class="${m[1]}">${m[1]}</span>`
+            );
+          })
+          .join("\n");
+      } catch (err) {
+        logbox.textContent = String(err);
+      } finally {
+        loadBtn.disabled = false;
+      }
+    }
+
+    function escapeHtml(s) {
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    loadBtn.addEventListener("click", loadLogs);
+    loadStatus();
+    loadLogs();
+  </script>
+</body>
+</html>

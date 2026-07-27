@@ -2,8 +2,11 @@
   "name": "devrev-d-demo-log-api",
   "version": "1.0.0",
   "private": true,
-  "description": "UC4 dummy MES log API fixtures for DevRev demo",
+  "description": "TIME-3X demo mock Ops Console + dummy log/status API (Vercel)",
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "vercel": "^56.2.1"
   }
 }
