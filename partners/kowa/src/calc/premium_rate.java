@@ -1,9 +1,16 @@
-package partners.kowa.calc;
+package partners.kowa.src.calc;
 
-/** 時間外割増率の計算。 */
-public class PremiumRate {
-    public static final double LEGAL_OT = 0.25;
-    public static final double KOWA_OT = 0.30;
-    /** Returns the configured overtime premium rate. */
-    public double overtimeRate() { return KOWA_OT; }
+/**
+ * 光和サービス向け: 時間外割増率（法定超 30%）。
+ * work-item:ISS-82
+ */
+public class premium_rate {
+    // L88-95: 光和独自上乗せ（標準 1.25 → 1.30）
+    public static double overtimeRate() {
+        return 1.30; // 法定25%に対し +5pt = 30%
+    }
+
+    public static double nightRate() {
+        return 1.25; // 深夜は法定どおり
+    }
 }
